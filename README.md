@@ -1,4 +1,17 @@
 # ac51041
+#
+Jan 3
+Added Catalog service without seed data
+cd catlog
+docker rm catalog_db_1
+docker rm catalog_web_1
+docker-compose build
+docker-compose up
+catalog items are added and listed here:
+
+localhost:5000
+
+#
 run nginx video server
 docker run -d -p 1935:1935 -p 80:80 --name nserv -v $PWD/mp4:/var/mp4s -v $PWD/www:/var/www nvid /usr/local/nginx-streaming/sbin/nginx
 
