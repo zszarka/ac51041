@@ -1,0 +1,43 @@
+login:
+ build: ./login/web
+ command: python -u app.py
+ ports:
+  - "5000:5000"
+ volumes:
+  - ./login/web:/todo
+ links:
+  - login_db
+  - session_db
+catalog:
+ build: ./catalog/web
+ command: python -u app.py
+ ports:
+  - "15000:5000"
+ volumes:
+  - ./catalog/web:/todo
+ links:
+  - catalog_db
+player:
+ build: ./player/web
+ command: python -u app.py
+ ports:
+  - "25000:5000"
+ volumes:
+  - ./player/web:/todo
+ links:
+  - catalog_db  
+
+login_db:
+ image: mongo:3.0.2
+ volumes:
+  - ./login/mongo/data:/data/db:rw
+  - ./login/mongo/import:/home
+catalog_db:
+ image: mongo:3.0.2
+ volumes:
+  - ./catalog/mongo/data:/data/db:rw
+  - ./catalog/mongo/import:/home
+session_db:
+ image: redis:latest
+ ports:
+  - "6379:6379"

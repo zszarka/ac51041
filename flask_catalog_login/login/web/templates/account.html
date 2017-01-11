@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MyFlix|Account</title>
+</head>
+<body>
+<script type="text/javascript">
+	var session_id;
+	alert("{{ user[1] }}")
+	session_id = "{{ user[1] }}";
+	localStorage.setItem("session_id", session_id);
+</script>
+	<h1>{{ user[0].name }}</h1>
+	<p>{{ user[0].email }}</p>
+	<p>{{ user[0].pw }}</p>
+
+</body>
+</html>

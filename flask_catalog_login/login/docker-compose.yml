@@ -1,0 +1,19 @@
+web:
+ build: ./web
+ command: python -u app.py
+ ports:
+  - "5000:5000"
+ volumes:
+  - ./web:/todo
+ links:
+  - db
+  - session_db
+db:
+ image: mongo:3.0.2
+ volumes:
+  - ./mongo/data:/data/db:rw
+  - ./mongo/import:/home
+session_db:
+ image: redis:latest
+ ports:
+  - "6379:6379"
