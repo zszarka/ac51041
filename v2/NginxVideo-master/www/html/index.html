@@ -1,0 +1,153 @@
+<!-- LOGIN PAGE -->
+
+<!doctype html>
+<head>
+  <meta charset="utf-8"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+<script>
+/*
+// Attach a submit handler to the form
+$( "#login_form_id" ).submit(function( event ) {
+  alert("will prevent def");
+  // Stop form from submitting normally
+  event.defaultPrevented();
+  alert("prevented def");
+ 
+  // Get some values from elements on the page:
+  var $form = $( this ),
+    term = $form.find( "input[name='s']" ).val(),
+    url = $form.attr( "action" );
+ 
+  // Send the data using post
+  var posting = $.post( url, { s: term } );
+ 
+  // Put the results in a div
+  posting.done(function( data ) {
+    var content = $( data ).find( "#content" );
+    $( "#result" ).empty().append( content );
+  });
+});
+
+  var login_form=$("login_form_id");
+    login_form.submit( function() {
+    $.ajax( {
+      type: "POST",
+      url: login_form.attr( 'action' ),
+      data: login_form.serialize(),
+      success: function( response ) {
+        console.log( response );
+      }
+    } );
+  } );
+*/
+      $(function() {
+          $('#test').click(function() {
+              alert("test clicked");
+              /*
+              var user = $('#txtUsername').val();
+              var pass = $('#txtPassword').val();
+              */
+              $.ajax({
+                  url: 'http://localhost:5000/test',
+                  /*
+                  data: $('form').serialize(),
+                  */
+                  type: 'POST',
+                  success: function(response) {
+                      console.log(response);
+                  },
+                  error: function(error) {
+                      console.log(error);
+                  }
+              });
+          });
+      });
+
+      $(function() {
+          $('#login_btn2').click(function() {
+              alert("login_btn2 clicked");
+              var form_data={
+                'email': 'myemail',
+                'pw':'mypass'
+              };
+              /*
+              var user = $('#txtUsername').val();
+              var pass = $('#txtPassword').val();
+              */
+              $.ajax({
+                  url: 'http://localhost:5000/login',
+                  /*
+                  data: $('form').serialize(),
+                  */
+                  data: form_data,
+                  type: 'POST',
+                  dataType:'json',
+                  encode:true,
+                  success: function(response) {
+                      console.log(response);
+                  },
+                  error: function(error) {
+                      console.log(error);
+                  }
+              });
+          });
+      });      
+
+/*
+      $(function() {      
+        $('#login_btn').click(function() {
+            alert("login clicked");
+*/
+            /*
+            var user = $('#txtUsername').val();
+            var pass = $('#txtPassword').val();
+            */
+/*            
+            $.ajax({
+                url: 'http://localhost:5000/test',
+                /* */
+/*
+                data: $('form').serialize(),
+                
+                type: 'POST',
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+*/
+</script>
+
+<div id="top-ribbon" class="ribbon">
+  <div id="ribbon-left" class="ribbon-half">
+    <span id="username_id" name="username" class="ribbon-span" />
+  </div>
+  <div id="ribbon-right" class="ribbon-half">
+  <!--
+    <form id="login_form_id" name="login_form" class="inline_form" action="http://localhost:5000/test" >
+      -->
+      <input type="text" name="email" id="email_id" class="login_input" placeholder="Your Email Here" />
+      <input type="password" name="pw" id="pw_id" class="login_input" placeholder="password" />
+  <!--    
+      <button type="submit" id="login_btn">Submit</button>
+    </form>
+    -->
+    <button id="login_btn2">Submit 2</button>
+  </div>
+</div>
+<div id="banner" class="ribbon">
+  <h1>MyFlix</h1>
+</div>
+  <button id="test">TEST</button>
+<div id="catalog_container_id" name="catalog_container" class="container">
+<div id="result"></div>
+</div>
+</body>
+</html>

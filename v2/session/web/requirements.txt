@@ -1,0 +1,3 @@
+Flask-And-Redis
+flask-cors
+flask-restful

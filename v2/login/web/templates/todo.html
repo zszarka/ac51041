@@ -1,0 +1,20 @@
+<!doctype html>
+<!--
+<form action="/new" method="POST" enctype="multipart/form-data">
+<input type="text" name="title"></input>
+<input type="text" name="description"></input>
+<input type="file" name="img"></input>
+
+<input type="submit"></input>
+</form>
+-->
+
+
+
+{% for item in items %}
+
+	<h1>{{ item.name }}</h1>
+	<p>{{ item.email }}</p>
+	<p>{{ item.pw }}</p>
+<!--	-->
+{% endfor %}
