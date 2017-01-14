@@ -1,8 +1,9 @@
 import os
 import json
-from flask import Flask, redirect, url_for, request, render_template, jsonify
+from flask import Flask, redirect, url_for, request, render_template, jsonify, Response
 from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
+from bson import json_util
 
 app = Flask(__name__)
 CORS(app)
@@ -70,8 +71,16 @@ def new():
 
 @app.route('/test', methods=['POST'])
 def test():
-	return json.dumps({'status':'OK','user':'zsolt','pass':'password'});
+	if request.form['cat']=="all":
+		video_items = list(db.videos.find())
+	else:
+		video_items = list(db.videos.find({"video.category":request.form['cat']}))
 
+	category_items = list(db.categories.find())
+	d={'cat':category_items,'vid':video_items}
+#	return toJson(_video_items)
+	return json.dumps(d, default=json_util.default)
+#	return jsonify(**d)
 
 
 if __name__ == "__main__":

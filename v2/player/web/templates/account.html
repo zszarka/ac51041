@@ -10,9 +10,21 @@
 	session_id = "{{ user }}";
 	localStorage.setItem("session_id", session_id);
 </script>
-	<h1>{{ user }}</h1>
-	<p></p>
-	<p></p>
+	<h1>Name: {{ user['name'] }}</h1>
+	<p>Email: {{ user['email'] }}</p>
+	<p>DOB: 
+	{% if user.has_key('dob_d') %}
+		{{ user['dob_d'] }} -
+	{% endif %}
+	{% if user.has_key('dob_m') %}
+		{{ user['dob_m'] }} -
+	{% endif %}
+	{% if user.has_key('dob_y') %}
+		{{ user['dob_y'] }}
+	{% endif %}
+	</p>
 
+<a href="/catalog">Catalogue</a>
+<a href="/logout">Logout</a>
 </body>
 </html>

@@ -21,16 +21,17 @@
 	<script>
 		 //alert("test")
 	</script>
-    <h1>Test video player</h1>
+    <h1>{{ title }}</h1>
 
     <div id="instructions">
 
       <video id="my_video_1" class="video-js vjs-default-skin" width="640px" height="267px"
-	     controls preload="none" poster='pics/bbb.png'
+	     controls preload="none" poster="{{ url_for('static', filename = img_src) }}"
 	     data-setup='{ "aspectRatio":"640:267", "playbackRates": [1, 1.5, 2] }'>
-	<source src="rtmp://localhost:1935/vod2/bbb.mp4" type='rtmp/mp4' />
+	<source src="rtmp://localhost:1935/vod2/{{ vid_src }}" type='rtmp/mp4' />
 	<!--<source src="http://vjs.zencdn.net/v/oceans.webm" type='video/webm' />-->
       </video>
       </div>
+  <a href="/catalog">Back to the Catalogue</a>
   </body>
   </html>

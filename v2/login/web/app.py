@@ -20,44 +20,22 @@ client = MongoClient(os.environ['V2_LOGIN_DB_1_PORT_27017_TCP_ADDR'], 27017)
 db = client.login
 
 
-@app.route('/')
-def todo():
-
-	_user_items = db.users.find()
-	user_items = [item for item in _user_items]
-
-	return render_template('login.html', msg = 'none')
-
-@app.route('/filter_cat', methods=['POST'])
-def filter_cat():
-
-	if request.form['cat']=="all":
-		_user_items =  db.users.find()
-	else:
-		_user_items = db.users.find({"video.category":request.form['cat']})
-	user_items = [item for item in _user_items]
-
-	return render_template('todo.html', items=(user_items))
-
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-	session_id = session['id']
+	session_id = request.form['session_id']
 	redis_db.delete(session_id)
-	return render_template('login.html', msg = 'logout')
+	return json.dumps({'session_id':session_id})
 
-@app.route('/register')
-def register():	
-	return render_template('register.html')
-#	return redirect(url_for('todo'))
-
-@app.route('/new_user',methods=['POST'])
-def new_user():
+@app.route('/register',methods=['POST'])
+def register():
 	email=request.form['email']		
 	item_doc = {
 		'email': request.form['email'],
 		'pw': request.form['pw'],
 		'name' : request.form['user_name'],
-		'dob' : request.form['dob']
+		'dob_d' : request.form['dob_d'],
+		'dob_m' : request.form['dob_m'],
+		'dob_y' : request.form['dob_y']
 	}
 #	save to mongo
 	db.users.insert_one(item_doc)
@@ -68,44 +46,16 @@ def new_user():
 	session['id'] = uuid.uuid4()
 	redis_db.hmset(session['id'],session )
 	session_id = redis_db.hget(session['id'],'id')
-	return render_template('account.html', user = [user,session_id])
+	d = {'success':'ok','name':user['name'],'email':user['email'],'session_id':session_id}
+	add_key_if_exist(user, d, 'dob_d')
+	add_key_if_exist(user, d, 'dob_m')
+	add_key_if_exist(user, d, 'dob_y')
+	return jsonify(**d)
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET','POST'])
 def login():
-	email=request.form['email']
-	pw=request.form['pw']
-	user = db.users.find_one({"email":email})
-#	if there is no result, set user to null
-	try:
-		user
-	except NameError:
-		user = None		
-	if user == None:
-#		user does not exist. Back to login
-		return render_template('login.html',msg = "not_exist")
-	else:
-		if user['pw'] == pw:
-#			correct password. insert session into redis. Show account
-			session['email'] = email
-			session['id'] = uuid.uuid4()
-#			redis_db.set("email", email)
-			redis_db.hmset(session['id'],session )
-#			set expiry using expire
-#			redis_db.expire(session['id'],60)
-#			test session id by retrieving
-			session_id = redis_db.hget(session['id'],'id')
-			return render_template('account.html', user = [user,session_id])
-		else:
-#			incorrect password. Back to login
-			return render_template('login.html',msg = "wrong_password")
-#	return json.dumps({'status':'OK','user':email,'pass':pw,'service':'login'});
-
-@app.route('/test', methods=['GET','POST'])
-def test():
 	email = request.form['email']
 	pw=request.form['pw']
-#	email = "sam"
-#	pw="pass"
 	user = db.users.find_one({"email":email})
 #	if there is no result, set user to null
 	try:
@@ -114,7 +64,6 @@ def test():
 		user = None		
 	if user == None:
 #		user does not exist. Back to login
-#		return render_template('login.html',msg = "not_exist")
 		return json.dumps({'login':'fail'})
 	else:
 		if user['pw'] == pw:
@@ -127,16 +76,20 @@ def test():
 #			redis_db.expire(session['id'],60)
 #			test session id by retrieving
 			session_id = redis_db.hget(session['id'],'id')
-#			return render_template('account.html', user = [user,session_id])
-#			return json.dumps({'login':'fail'})
+#			prepare return json
 			d = {'login':'pass','name':user['name'],'email':user['email'],'session_id':session_id}
+			add_key_if_exist(user, d, 'dob_d')
+			add_key_if_exist(user, d, 'dob_m')
+			add_key_if_exist(user, d, 'dob_y')
+#			user['login'] = 'pass'
 			return jsonify(**d)
 		else:
 #			incorrect password. Back to login
-#			return render_template('login.html',msg = "wrong_password")
 			return json.dumps({'login':'fail'})
 	
-
+def add_key_if_exist(src, dest, key):
+	if src.has_key(key):
+		dest[key] = src[key]
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', debug=True)

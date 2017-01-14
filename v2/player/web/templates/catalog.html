@@ -1,0 +1,31 @@
+<!doctype html>
+
+<h1>Categories</h1>
+	<form action="/filter_cat" method="POST">
+	<input name="cat" type="submit" value= "all"></input>
+	</form>
+
+{% for item in cat %}
+
+	<form action="/filter_cat" method="POST">
+	<input name="cat" type="submit" value= "{{ item.category }}"></input>
+	</form>
+
+{% endfor %}
+
+<h1>Films</h1>
+
+{% for item in vid %}
+
+	<h2>{{ item['video'].name }}</h2>
+	<p>Category: {{ item['video'].category }}</p>
+	<form action="/player" method="post">
+		<input type="hidden" name="vid_file_name" value = "{{ item['video'].file }}">
+		<input type="hidden" name="img_file_name" value = "{{ item['video'].thumb }}">
+		<input type="hidden" name="title" value = "{{ item['video'].name }}">
+		<button>
+			<img src="{{ url_for('static', filename=item.video.thumb) }}"></img>
+		</button>
+	</form>
+
+{% endfor %}

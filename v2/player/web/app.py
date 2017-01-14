@@ -1,23 +1,81 @@
 import os
 import json
 import requests
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template, session
 from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = os.urandom(24)
 
-login_url ="http://" + os.environ['V2_LOGIN_1_PORT_5000_TCP_ADDR'] + ":5000/test"
+#######################################################################################
+#CATALOGUE AND PLAY
+#######################################################################################
 
-@app.route('/player')
+catalog_url ="http://" + os.environ['V2_CATALOG_1_PORT_5000_TCP_ADDR'] + ":5000/test"
+
+@app.route('/catalog')
+def catalog():
+	qry = {'cat':'all'}
+	res = requests.post(catalog_url, data = qry)
+	r = res.json()
+	cat = r['cat']
+	vid = r['vid']
+	return render_template('catalog.html', cat = cat, vid = vid)
+
+@app.route('/filter_cat',methods = ['POST'])
+def filter_cat():
+	f = request.form['cat']
+	qry = {'cat': f }
+	res = requests.post(catalog_url, data = qry)
+	r = res.json()
+	cat = r['cat']
+	vid = r['vid']
+	return render_template('catalog.html', cat = cat, vid = vid)
+
+@app.route('/player', methods = ['POST'])
 def player():
-#	dictToSend={'question':'What is the answer?'}
-#	res = requests.post('http://localhost:15000/test/endpoint',json = dictToSend)
-#	resText = res.text
-#	dictFromServer=res.json()
-	return render_template('player.html')
+	vid_src = request.form['vid_file_name']	
+	img_src = request.form['img_file_name']
+	title = request.form['title']		
+	return render_template('player.html', vid_src = vid_src, img_src =img_src, title = title )
 
+#######################################################################################
+#LOGIN AND ACCOUNT ####################################################################
+#######################################################################################
+
+login_url ="http://" + os.environ['V2_LOGIN_1_PORT_5000_TCP_ADDR'] + ":5000/login"
+register_url ="http://" + os.environ['V2_LOGIN_1_PORT_5000_TCP_ADDR'] + ":5000/register"
+logout_url ="http://" + os.environ['V2_LOGIN_1_PORT_5000_TCP_ADDR'] + ":5000/logout"
+
+@app.route('/logout')
+def logout():
+	dic = {'session_id': session['id']}
+	r = requests.post(logout_url, data = dic)
+	session.pop('id', None)
+	return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['POST'])
+def register():
+	cred = {
+		'email': request.form['email'],
+		'pw': request.form['pw'],
+		'user_name':request.form['user_name'],
+		'dob_d':request.form['dob_d'],
+		'dob_m':request.form['dob_m'],
+		'dob_y':request.form['dob_y']
+	}	
+	res = requests.post(register_url, data = cred)
+	r = res.json()
+	if r['success'] == "ok":
+		session['id'] = r['session_id']	
+		return render_template('account.html', user = r )
+	else:
+		return redirect(url_for('register_form'))
+#	return render_template('account.html', user = cred)
+#	return render_template('debug.html', res = res.json())
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -27,8 +85,9 @@ def login():
 	}	
 	res = requests.post(login_url, data = cred)
 	r = res.json()
-	if r['login'] == "pass":	
-		return render_template('account.html', user = r['name'] )
+	if r['login'] == "pass":
+		session['id'] = r['session_id']	
+		return render_template('account.html', user = r  )
 	else:
 		return redirect(url_for('index'))
 #	return render_template('account.html', user = r.text )
@@ -37,45 +96,9 @@ def login():
 def index():
 	return render_template('login.html')
 
-@app.route('/filter_cat', methods=['POST'])
-def filter_cat():
-
-	if request.form['cat']=="all":
-		_video_items =  db.videos.find()
-	else:
-		_video_items = db.videos.find({"video.category":request.form['cat']})
-	video_items = [item for item in _video_items]
-
-	_category_items = db.categories.find()
-	category_items = [item for item in _category_items]
-
-	return render_template('todo.html', items=(category_items,video_items))
-
-
-@app.route('/new', methods=['POST'])
-def new():
-
-#	f=request.files['img']
-#	fname=f.filename
-#	save not working	
-#	path_and_file = url_for('static', filename=fname)
-#	fullname = f.save(path_and_file)
-#	print(fullname)
-
-#	item_doc = {
-#		'name': request.form['title'],
-#		'description': request.form['description'],
-#		'source' : "Flask App",
-#		'thumb' : fname
-#	}
-#	db.todo.insert_one(item_doc)
-	return redirect(url_for('todo'))
-
-@app.route('/test', methods=['POST'])
-def test():
-	return json.dumps({'status':'OK','user':'zsolt','pass':'password'});
-
-
+@app.route('/register_form')
+def register_form():
+	return render_template('register.html')
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', debug=True)
