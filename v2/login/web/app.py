@@ -3,7 +3,7 @@ import json
 import uuid
 from flask import Flask, redirect, url_for, request, render_template, session, escape,jsonify
 from pymongo import MongoClient
-from flask_cors import CORS, cross_origin
+#from flask_cors import CORS, cross_origin
 from redis import StrictRedis
 
 #V2_
@@ -11,7 +11,7 @@ REDIS_HOST = os.environ['V2_SESSION_DB_1_PORT_6379_TCP_ADDR']
 REDIS_PORT = 6379
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 app.secret_key="kjhdsa89s9dx34"
 
 redis_db = StrictRedis(host=REDIS_HOST, port=REDIS_PORT)

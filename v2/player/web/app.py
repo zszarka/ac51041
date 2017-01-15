@@ -3,17 +3,25 @@ import json
 import requests
 from flask import Flask, redirect, url_for, request, render_template, session
 from pymongo import MongoClient
-from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-CORS(app)
 app.secret_key = os.urandom(24)
 
+
+
+# test logged in
+session_url ="http://" + os.environ['V2_SESSION_1_PORT_5000_TCP_ADDR'] + ":5000/get_user"
+@app.route('/test_login')
+def test_login():
+	sess_id = session['ids']
+	dic = {'session_id': sess_id}
+	r = requests.post(logout_url, data = dic)	
+	return render_template('debug.html', res = r.json() )
 #######################################################################################
 #CATALOGUE AND PLAY
 #######################################################################################
 
-catalog_url ="http://" + os.environ['V2_CATALOG_1_PORT_5000_TCP_ADDR'] + ":5000/test"
+catalog_url ="http://" + os.environ['V2_CATALOG_1_PORT_5000_TCP_ADDR'] + ":5000/filter_cat"
 
 @app.route('/catalog')
 def catalog():
@@ -51,9 +59,9 @@ logout_url ="http://" + os.environ['V2_LOGIN_1_PORT_5000_TCP_ADDR'] + ":5000/log
 
 @app.route('/logout')
 def logout():
-	dic = {'session_id': session['id']}
+	dic = {'session_id': session['ids']}
 	r = requests.post(logout_url, data = dic)
-	session.pop('id', None)
+	session.pop('ids', None)
 	return redirect(url_for('index'))
 
 
@@ -70,12 +78,10 @@ def register():
 	res = requests.post(register_url, data = cred)
 	r = res.json()
 	if r['success'] == "ok":
-		session['id'] = r['session_id']	
+		session['ids'] = r['session_id']	
 		return render_template('account.html', user = r )
 	else:
 		return redirect(url_for('register_form'))
-#	return render_template('account.html', user = cred)
-#	return render_template('debug.html', res = res.json())
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -86,7 +92,7 @@ def login():
 	res = requests.post(login_url, data = cred)
 	r = res.json()
 	if r['login'] == "pass":
-		session['id'] = r['session_id']	
+		session['ids'] = r['session_id']	
 		return render_template('account.html', user = r  )
 	else:
 		return redirect(url_for('index'))
