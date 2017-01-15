@@ -10,7 +10,7 @@ The system currently consists of:<br/>
 	<li>Catalog: Flask API with mongodb</li>
 	<li>Session: Flask API with redis (not fully integrated)</li>
 </ul>
-cd ac51041/v2
+cd ac51041/v2<br/>
 chmod +x start.sh stop.sh pause.sh resume.sh 
 <h2>Starting up the system:</h2>
 <ol>
@@ -19,9 +19,13 @@ chmod +x start.sh stop.sh pause.sh resume.sh
 	<li>Start them in deamon mode (docker-compose up -d)</li>
 	<li>Import Data (sample users and videos) from folders linked to directories on the host</li>
 </ol>
+Please use sudo the first time, because the data import inside the bash needs permissions<br/>
+If run without sudo, the mongo containers will not be ready for the import<br/> 
 sudo ./start.sh
 <h2>Stop Services</h2>
 Stop and remove all project containers (remove persisting data)<br/>
 ./stop.sh
 <h2>Pause and Resume</h2>
-Stop and start containers without loosing persisting data
+Stop and start containers without loosing persisting data<br/>
+./pause.sh<br/>
+./resume.sh
