@@ -1,7 +1,6 @@
 #!/bin/bash
 
 docker stop v2_login_1
-docker stop v2_front_1
 docker stop v2_login_db_1
 docker stop v2_catalog_1
 docker stop v2_player_1
@@ -11,7 +10,6 @@ docker stop nserv
 
 
 docker rm v2_login_1
-docker rm v2_front_1
 docker rm v2_login_db_1
 docker rm v2_catalog_1
 docker rm v2_player_1

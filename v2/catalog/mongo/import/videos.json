@@ -13,9 +13,9 @@
 {
 	"video":{
 		"server":1,
-		"name":"Erlang Stuff",
-		"file":"erlang.mp4",
-		"thumb":"erlang.png",
+		"name":"Jenkins Stuff",
+		"file":"jenkins.mp4",
+		"thumb":"jenkins.png",
 		"pic":"erlang.png",
 		"uuid":"380613d5-71b3-4f24-8a58-ca1a260b49d2",
 		"category":"cassandra"
