@@ -91,8 +91,10 @@ def login():
 	}	
 	res = requests.post(login_url, data = cred)
 	r = res.json()
+	print(r)
 	if r['login'] == "pass":
-		session['ids'] = r['session_id']	
+		session['ids'] = r['session_id']
+		print(r['session_id'])	
 		return render_template('account.html', user = r  )
 	else:
 		return redirect(url_for('index'))
