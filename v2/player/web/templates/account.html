@@ -7,7 +7,7 @@
 <script type="text/javascript">
 	var session_id;
 	session_id = "{{ user['session_id'] }}";
-	alert(session_id)
+//	alert(session_id)
 	localStorage.setItem("session_id", session_id);
 </script>
 	<h1>Name: {{ user['name'] }}</h1>
@@ -26,7 +26,8 @@
 
 <a href="/catalog">Catalogue</a>
 <a href="/logout">Logout</a>
-
+<!--
 <a href="/test_login">SESSION TEST</a>
+-->
 </body>
 </html>

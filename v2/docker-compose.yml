@@ -41,7 +41,8 @@ player:
   - catalog_db
   - login
   - catalog
-  - session  
+  - session
+  - recommend_db  
 
 login_db:
  image: mongo:3.0.2
@@ -59,3 +60,14 @@ session_db:
  image: redis:latest
  expose:
   - "6379"
+
+recommend_db:
+ image: neo4j:3.0
+ environment:
+  - NEO4J_AUTH=none
+ ports:
+  - "7474:7474"
+  - "7687:7687"
+ volumes:
+  - ./recommend/db/data:/data
+  - ./recommend/db/logs:/logs
